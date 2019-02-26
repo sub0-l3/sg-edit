@@ -1,0 +1,16 @@
+#storyReader{
+  position: relative;
+  width: 30%;
+}
+span:focus {
+  background-color: yellow;
+}
+#popup {
+  top:0;
+  right: 0;
+  background-color: orange;
+  position: absolute;
+  z-index: 99;
+  border: 1px solid grey;
+  padding: 5px;
+}

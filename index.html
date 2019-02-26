@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>suggest edits</title>
+  
+  
+  
+      <link rel="stylesheet" href="css/style.css">
+
+  
+</head>
+
+<body>
+
+  <div id="storyReader" onmouseup="check()">
+  <span data-cue="1">“A</span> <span data-cue="2">perfect</span> <span data-cue="3">day</span> <span data-cue="4">for</span> <span data-cue="5">a</span> <span data-cue="6">walk!”</span> <span data-cue="7">thinks</span>
+  <span data-cue="8">Mr.</span> <span data-cue="9">Centipede.</span>
+  <span data-cue="10">“What</span> <span data-cue="11">better</span> <span data-cue="12">way</span> <span data-cue="13">to</span> <span data-cue="14">keep</span>
+  <span data-cue="15">my</span> <span data-cue="16">42</span> <span data-cue="17">feet</span> <span data-cue="18">strong</span> <span data-cue="19">and</span> <span data-cue="20">fit?”</span>
+</div>
+<div id="popup" style="display:none;">
+  <div id="popup__comments"></div>
+<!--   <form id="comment_form" onsubmit="on_popup_comments()"> -->
+    <input  name="comment" id="popup__input">
+<!--     <input type="hidden" id="custId" name="custId" value="3487"> -->
+  <button onclick="submitComments()">Submit</button>
+<!--   <input type="submit" value="Submit"> -->
+<!--   </form> -->
+</div>
+<div id="data-persist">
+  
+</div>
+  
+  
+
+    <script  src="js/index.js"></script>
+
+
+
+
+</body>
+
+</html>
