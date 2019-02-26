@@ -1,16 +1,34 @@
+.container {
+  display: flex;
+  min-height: 7rem;
+}
+
 #storyReader{
   position: relative;
-  width: 30%;
+  width: 70%;
 }
 span:focus {
   background-color: yellow;
 }
 #popup {
-  top:0;
-  right: 0;
+  /* top:0; */
+  /* right: 0; */
   background-color: orange;
-  position: absolute;
-  z-index: 99;
+  /* position: absolute; */
+  /* z-index: 99; */
   border: 1px solid grey;
   padding: 5px;
+  width: 30%;
+}
+
+#popup__comments {
+
+}
+
+.debug {
+  display: flex;
+}
+
+.debug__panel {
+  flex: 1;
 }
