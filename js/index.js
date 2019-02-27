@@ -1,7 +1,7 @@
 let dataPersist = [];
 let data = {};
 
-function check() {
+function handleMouseUp() {
   data = {};
   storyPageEl = document.getElementById("storyReader");
   let bodyRect = document.body.getBoundingClientRect();
@@ -28,6 +28,7 @@ function check() {
 
     if (cueEl) {
       data.selected.push(cueEl.innerHTML);
+      cueEl.classList.add("selected");
       elemRect = cueEl.getBoundingClientRect();
       offset = elemRect.top - bodyRect.top;
       console.log("Element is " + offset + " vertical pixels from <body>");
@@ -38,8 +39,8 @@ function check() {
     null,
     2
   )}<pre>`;
-  document.getElementById("popup").style.display = "block";
   document.getElementById("popup__input").value = "";
+  // document.getElementById("popup__input").focus();
 }
 
 function submitComments() {
@@ -51,7 +52,7 @@ function submitComments() {
   for (let i = data.startIdx; i <= endIdx; i++) {
     let cueEl = document.querySelector(`span[data-cue='${i}']`);
     if (cueEl) {
-      cueEl.style.backgroundColor = "rgb(233, 156, 156)";
+      cueEl.classList = "has_comments";
     }
   }
   data = {};

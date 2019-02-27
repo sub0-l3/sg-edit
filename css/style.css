@@ -32,3 +32,11 @@ span:focus {
 .debug__panel {
   flex: 1;
 }
+
+.has_comments {
+  background-color: rgb(233, 156, 156);
+}
+
+.selected {
+  background-color: lightgrey;
+}
