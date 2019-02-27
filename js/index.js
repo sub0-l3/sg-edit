@@ -10,13 +10,23 @@ function handleMouseUp() {
   // condition to handle case where selection starts from a space
   let anchorNode = document.getSelection().anchorNode,
     focusNode = document.getSelection().focusNode;
-  let startIdx = anchorNode.parentNode.attributes["data-cue"]
-    ? anchorNode.parentNode.attributes["data-cue"].value
-    : anchorNode.nextSibling.attributes["data-cue"].value;
+  let startIdx, endIdx;
 
-  let endIdx = focusNode.parentNode.attributes["data-cue"]
-    ? focusNode.parentNode.attributes["data-cue"].value
-    : focusNode.previousSibling.attributes["data-cue"].value;
+  if (anchorNode.parentNode.attributes["data-cue"]) {
+    startIdx = anchorNode.parentNode.attributes["data-cue"].value;
+  } else if (anchorNode.nextSibling && anchorNode.nextSibling.attributes["data-cue"]) {
+    startIdx = anchorNode.nextSibling.attributes["data-cue"].value;
+  } else {
+    return;
+  }
+
+  if (focusNode.parentNode.attributes["data-cue"]) {
+    endIdx = focusNode.parentNode.attributes["data-cue"].value;
+  } else if (focusNode.previousSibling && focusNode.previousSibling.attributes["data-cue"]) {
+    endIdx = focusNode.previousSibling.attributes["data-cue"].value;
+  } else {
+    return;
+  }
 
   let minIdx = Math.min(startIdx, endIdx);
 
