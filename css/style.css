@@ -1,19 +1,30 @@
 .container {
   display: flex;
   min-height: 7rem;
+  justify-content: center;
 }
 
-#storyReader{
-  position: relative;
-  width: 70%;
+.container__image {
+  width: 100%;
 }
+
+.container__content {
+  padding: 2rem;
+}
+
+#storyReader {
+  position: relative;
+  width: 55%;
+  padding: 1rem;
+  border: 1px solid lightgrey;
+}
+
 span:focus {
   background-color: yellow;
 }
 #popup {
   /* top:0; */
   /* right: 0; */
-  background-color: orange;
   /* position: absolute; */
   /* z-index: 99; */
   border: 1px solid grey;
@@ -22,7 +33,6 @@ span:focus {
 }
 
 #popup__comments {
-
 }
 
 .debug {
