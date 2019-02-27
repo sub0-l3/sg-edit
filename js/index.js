@@ -1,7 +1,9 @@
 let dataPersist = [];
 let data = {};
+let selectedIds = new Set();
 
 function handleMouseUp() {
+  restoreSelectionStyling();
   data = {};
   storyPageEl = document.getElementById("storyReader");
   let bodyRect = document.body.getBoundingClientRect();
@@ -12,13 +14,13 @@ function handleMouseUp() {
     ? anchorNode.parentNode.attributes["data-cue"].value
     : anchorNode.nextSibling.attributes["data-cue"].value;
 
-  endIdx = focusNode.parentNode.attributes["data-cue"]
+  let endIdx = focusNode.parentNode.attributes["data-cue"]
     ? focusNode.parentNode.attributes["data-cue"].value
     : focusNode.previousSibling.attributes["data-cue"].value;
 
-  minIdx = Math.min(startIdx, endIdx);
+  let minIdx = Math.min(startIdx, endIdx);
 
-  maxIdx = Math.max(startIdx, endIdx);
+  let maxIdx = Math.max(startIdx, endIdx);
 
   data.startIdx = minIdx;
   data.endIdx = maxIdx;
@@ -28,17 +30,19 @@ function handleMouseUp() {
 
     if (cueEl) {
       data.selected.push(cueEl.innerHTML);
-      cueEl.classList.add("selected");
+      
+
+      if (!cueEl.classList.contains("has_comments")) {
+        selectedIds.add(i);
+        cueEl.classList.add("selected");
+      }
+
       elemRect = cueEl.getBoundingClientRect();
       offset = elemRect.top - bodyRect.top;
       console.log("Element is " + offset + " vertical pixels from <body>");
     }
   }
-  document.getElementById("popup__data").innerHTML = `<pre>${JSON.stringify(
-    data,
-    null,
-    2
-  )}<pre>`;
+  renderData();
   document.getElementById("popup__input").value = "";
   // document.getElementById("popup__input").focus();
 }
@@ -49,15 +53,26 @@ function submitComments() {
   if (Object.keys(data).length === 0) return;
   data.comment = comment;
   dataPersist.push(data);
-  for (let i = data.startIdx; i <= endIdx; i++) {
+  for (let i = data.startIdx; i <= data.endIdx; i++) {
     let cueEl = document.querySelector(`span[data-cue='${i}']`);
     if (cueEl) {
       cueEl.classList = "has_comments";
+      selectedIds.delete(i);
     }
   }
-  data = {};
+  data = new Object();
+  renderData();
+
   document.getElementById("data-persist").innerHTML = `<pre>${JSON.stringify(
     dataPersist,
+    null,
+    2
+  )}<pre>`;
+}
+
+function renderData() {
+  document.getElementById("popup__data").innerHTML = `<pre>${JSON.stringify(
+    data,
     null,
     2
   )}<pre>`;
@@ -75,3 +90,12 @@ document.addEventListener("mouseover", function(event) {
   let commentsEl = comments.map(c => `<li>${c.comment}</li>`);
   document.getElementById("popup__comments").innerHTML = commentsEl.join("");
 });
+
+function restoreSelectionStyling() {
+  selectedIds.forEach(i => {
+    let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    cueEl.classList = "";
+  })
+}
+
+// document.addEventListener("click", restoreSelectionStyling);
