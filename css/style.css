@@ -9,30 +9,26 @@
 }
 
 .container__content {
-  padding: 2rem;
+  padding: 1rem;
+  font-size: 1.5rem;
 }
 
 #storyReader {
   position: relative;
-  width: 55%;
+  width: 40%;
   padding: 1rem;
   border: 1px solid lightgrey;
 }
 
-span:focus {
-  background-color: yellow;
-}
 #popup {
-  /* top:0; */
-  /* right: 0; */
-  /* position: absolute; */
-  /* z-index: 99; */
   border: 1px solid grey;
   padding: 5px;
-  width: 30%;
+  width: 25%;
 }
 
-#popup__comments {
+.submit-comments-box {
+  width: 25%;
+  padding: 0 2rem;
 }
 
 .debug {
@@ -44,9 +40,10 @@ span:focus {
 }
 
 .has_comments {
-  background-color: rgb(233, 156, 156);
+  background-color: rgba(70, 142, 229, 0.32);
 }
 
 .selected {
-  background-color: lightgrey;
+  background-color: #342f2f;
+  color: white;
 }

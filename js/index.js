@@ -30,7 +30,6 @@ function handleMouseUp() {
 
     if (cueEl) {
       data.selected.push(cueEl.innerHTML);
-      
 
       if (!cueEl.classList.contains("has_comments")) {
         selectedIds.add(i);
@@ -44,7 +43,7 @@ function handleMouseUp() {
   }
   renderData();
   document.getElementById("popup__input").value = "";
-  // document.getElementById("popup__input").focus();
+  document.getElementById("popup__input").focus();
 }
 
 function submitComments() {
@@ -95,7 +94,11 @@ function restoreSelectionStyling() {
   selectedIds.forEach(i => {
     let cueEl = document.querySelector(`span[data-cue='${i}'`);
     cueEl.classList = "";
-  })
+  });
 }
-
+document.addEventListener("keypress", function(e) {
+  if (e.which == 13) {
+    submitComments();
+  }
+});
 // document.addEventListener("click", restoreSelectionStyling);
