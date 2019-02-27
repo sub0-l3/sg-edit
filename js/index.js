@@ -1,6 +1,7 @@
 let dataPersist = [];
 let data = {};
-let selectedIds = new Set();
+let selectedIdsWithOutComments = new Set();
+let selectedIdsWithComments = new Set();
 
 function handleMouseUp() {
   restoreSelectionStyling();
@@ -42,9 +43,12 @@ function handleMouseUp() {
       data.selected.push(cueEl.innerHTML);
 
       if (!cueEl.classList.contains("has_comments")) {
-        selectedIds.add(i);
-        cueEl.classList.add("selected");
+        selectedIdsWithOutComments.add(i);
+      } else if(cueEl.classList.contains("has_comments")){
+        cueEl.classList.remove("has_comments");
+        selectedIdsWithComments.add(i);
       }
+      cueEl.classList.add("selected");
 
       elemRect = cueEl.getBoundingClientRect();
       offset = elemRect.top - bodyRect.top;
@@ -66,7 +70,7 @@ function submitComments() {
     let cueEl = document.querySelector(`span[data-cue='${i}']`);
     if (cueEl) {
       cueEl.classList = "has_comments";
-      selectedIds.delete(i);
+      selectedIdsWithOutComments.delete(i);
     }
   }
   data = new Object();
@@ -101,9 +105,13 @@ document.addEventListener("mouseover", function(event) {
 });
 
 function restoreSelectionStyling() {
-  selectedIds.forEach(i => {
+  selectedIdsWithOutComments.forEach(i => {
     let cueEl = document.querySelector(`span[data-cue='${i}'`);
     cueEl.classList = "";
+  });
+  selectedIdsWithComments.forEach(i => {
+    let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    cueEl.classList = "has_comments";
   });
 }
 document.addEventListener("keypress", function(e) {
