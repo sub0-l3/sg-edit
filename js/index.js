@@ -2,6 +2,7 @@ let dataPersist = [];
 let data = {};
 let selectedIdsWithOutComments = new Set();
 let selectedIdsWithComments = new Set();
+let comment_id = 0;
 
 function handleMouseUp() {
   restoreSelectionStyling();
@@ -15,7 +16,10 @@ function handleMouseUp() {
 
   if (anchorNode.parentNode.attributes["data-cue"]) {
     startIdx = anchorNode.parentNode.attributes["data-cue"].value;
-  } else if (anchorNode.nextSibling && anchorNode.nextSibling.attributes["data-cue"]) {
+  } else if (
+    anchorNode.nextSibling &&
+    anchorNode.nextSibling.attributes["data-cue"]
+  ) {
     startIdx = anchorNode.nextSibling.attributes["data-cue"].value;
   } else {
     return;
@@ -23,7 +27,10 @@ function handleMouseUp() {
 
   if (focusNode.parentNode.attributes["data-cue"]) {
     endIdx = focusNode.parentNode.attributes["data-cue"].value;
-  } else if (focusNode.previousSibling && focusNode.previousSibling.attributes["data-cue"]) {
+  } else if (
+    focusNode.previousSibling &&
+    focusNode.previousSibling.attributes["data-cue"]
+  ) {
     endIdx = focusNode.previousSibling.attributes["data-cue"].value;
   } else {
     return;
@@ -44,7 +51,7 @@ function handleMouseUp() {
 
       if (!cueEl.classList.contains("has_comments")) {
         selectedIdsWithOutComments.add(i);
-      } else if(cueEl.classList.contains("has_comments")){
+      } else if (cueEl.classList.contains("has_comments")) {
         cueEl.classList.remove("has_comments");
         selectedIdsWithComments.add(i);
       }
@@ -64,6 +71,8 @@ function submitComments() {
   var comment = document.getElementById("popup__input").value;
   document.getElementById("popup__input").value = "";
   if (Object.keys(data).length === 0) return;
+  comment_id += 1;
+  data.id = comment_id;
   data.comment = comment;
   dataPersist.push(data);
   for (let i = data.startIdx; i <= data.endIdx; i++) {
