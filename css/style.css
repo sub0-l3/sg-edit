@@ -47,3 +47,8 @@
   background-color: #342f2f;
   color: white;
 }
+
+.highlight-comment {
+  color: white;
+  background-color: brown;
+}

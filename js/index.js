@@ -101,17 +101,26 @@ function renderData() {
 }
 
 // Listen to all mouseover events on the document
-document.addEventListener("mouseover", function(event) {
-  // If the event target doesn't match bail
-  if (!event.target.hasAttribute("data-cue")) return;
-  currentIdx = event.target.attributes["data-cue"].value;
-  // Otherwise, run your code...
-  let comments = dataPersist.filter(
-    data => currentIdx >= data.startIdx && currentIdx <= data.endIdx
-  );
-  let commentsEl = comments.map(c => `<li>${c.comment}</li>`);
-  document.getElementById("popup__comments").innerHTML = commentsEl.join("");
-});
+document
+  .getElementById("storyReader")
+  .addEventListener("mouseover", function(event) {
+    // If the event target doesn't match bail
+    if (!event.target.hasAttribute("data-cue")) return;
+    currentIdx = event.target.attributes["data-cue"].value;
+    // Otherwise, run your code...
+    let comments = dataPersist.filter(
+      data => currentIdx >= data.startIdx && currentIdx <= data.endIdx
+    );
+    let commentsEl = comments.map(
+      c =>
+        `<li data-comment=${
+          c.id
+        } onmouseover="highlightComment(this)" onmouseout="unHighlightComment(this)">${
+          c.comment
+        }</li>`
+    );
+    document.getElementById("popup__comments").innerHTML = commentsEl.join("");
+  });
 
 function restoreSelectionStyling() {
   selectedIdsWithOutComments.forEach(i => {
@@ -128,4 +137,22 @@ document.addEventListener("keypress", function(e) {
     submitComments();
   }
 });
-// document.addEventListener("click", restoreSelectionStyling);
+
+function highlightComment(el) {
+  // console.log(el.attributes["data-comment"].value);
+  let commentIdx = el.attributes["data-comment"].value;
+  comment = dataPersist.find(data => data.id == commentIdx);
+  for (let i = comment.startIdx; i <= comment.endIdx; i++) {
+    let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    cueEl.classList.add("highlight-comment");
+  }
+}
+
+function unHighlightComment(el) {
+  let commentIdx = el.attributes["data-comment"].value;
+  comment = dataPersist.find(data => data.id == commentIdx);
+  for (let i = comment.startIdx; i <= comment.endIdx; i++) {
+    let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    cueEl.classList.remove("highlight-comment");
+  }
+}
