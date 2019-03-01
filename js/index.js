@@ -1,6 +1,8 @@
 let dataPersist = [];
 let data = {};
-let selectedIds = new Set();
+let selectedIdsWithOutComments = new Set();
+let selectedIdsWithComments = new Set();
+let comment_id = 0;
 
 function handleMouseUp() {
   restoreSelectionStyling();
@@ -10,13 +12,29 @@ function handleMouseUp() {
   // condition to handle case where selection starts from a space
   let anchorNode = document.getSelection().anchorNode,
     focusNode = document.getSelection().focusNode;
-  let startIdx = anchorNode.parentNode.attributes["data-cue"]
-    ? anchorNode.parentNode.attributes["data-cue"].value
-    : anchorNode.nextSibling.attributes["data-cue"].value;
+  let startIdx, endIdx;
 
-  let endIdx = focusNode.parentNode.attributes["data-cue"]
-    ? focusNode.parentNode.attributes["data-cue"].value
-    : focusNode.previousSibling.attributes["data-cue"].value;
+  if (anchorNode.parentNode.attributes["data-cue"]) {
+    startIdx = anchorNode.parentNode.attributes["data-cue"].value;
+  } else if (
+    anchorNode.nextSibling &&
+    anchorNode.nextSibling.attributes["data-cue"]
+  ) {
+    startIdx = anchorNode.nextSibling.attributes["data-cue"].value;
+  } else {
+    return;
+  }
+
+  if (focusNode.parentNode.attributes["data-cue"]) {
+    endIdx = focusNode.parentNode.attributes["data-cue"].value;
+  } else if (
+    focusNode.previousSibling &&
+    focusNode.previousSibling.attributes["data-cue"]
+  ) {
+    endIdx = focusNode.previousSibling.attributes["data-cue"].value;
+  } else {
+    return;
+  }
 
   let minIdx = Math.min(startIdx, endIdx);
 
@@ -32,9 +50,12 @@ function handleMouseUp() {
       data.selected.push(cueEl.innerHTML);
 
       if (!cueEl.classList.contains("has_comments")) {
-        selectedIds.add(i);
-        cueEl.classList.add("selected");
+        selectedIdsWithOutComments.add(i);
+      } else if (cueEl.classList.contains("has_comments")) {
+        cueEl.classList.remove("has_comments");
+        selectedIdsWithComments.add(i);
       }
+      cueEl.classList.add("selected");
 
       elemRect = cueEl.getBoundingClientRect();
       offset = elemRect.top - bodyRect.top;
@@ -50,13 +71,15 @@ function submitComments() {
   var comment = document.getElementById("popup__input").value;
   document.getElementById("popup__input").value = "";
   if (Object.keys(data).length === 0) return;
+  comment_id += 1;
+  data.id = comment_id;
   data.comment = comment;
   dataPersist.push(data);
   for (let i = data.startIdx; i <= data.endIdx; i++) {
     let cueEl = document.querySelector(`span[data-cue='${i}']`);
     if (cueEl) {
       cueEl.classList = "has_comments";
-      selectedIds.delete(i);
+      selectedIdsWithOutComments.delete(i);
     }
   }
   data = new Object();
@@ -78,22 +101,35 @@ function renderData() {
 }
 
 // Listen to all mouseover events on the document
-document.addEventListener("mouseover", function(event) {
-  // If the event target doesn't match bail
-  if (!event.target.hasAttribute("data-cue")) return;
-  currentIdx = event.target.attributes["data-cue"].value;
-  // Otherwise, run your code...
-  let comments = dataPersist.filter(
-    data => currentIdx >= data.startIdx && currentIdx <= data.endIdx
-  );
-  let commentsEl = comments.map(c => `<li>${c.comment}</li>`);
-  document.getElementById("popup__comments").innerHTML = commentsEl.join("");
-});
+document
+  .getElementById("storyReader")
+  .addEventListener("mouseover", function(event) {
+    // If the event target doesn't match bail
+    if (!event.target.hasAttribute("data-cue")) return;
+    currentIdx = event.target.attributes["data-cue"].value;
+    // Otherwise, run your code...
+    let comments = dataPersist.filter(
+      data => currentIdx >= data.startIdx && currentIdx <= data.endIdx
+    );
+    let commentsEl = comments.map(
+      c =>
+        `<li data-comment=${
+          c.id
+        } onmouseover="highlightComment(this)" onmouseout="unHighlightComment(this)">${
+          c.comment
+        }</li>`
+    );
+    document.getElementById("popup__comments").innerHTML = commentsEl.join("");
+  });
 
 function restoreSelectionStyling() {
-  selectedIds.forEach(i => {
+  selectedIdsWithOutComments.forEach(i => {
     let cueEl = document.querySelector(`span[data-cue='${i}'`);
     cueEl.classList = "";
+  });
+  selectedIdsWithComments.forEach(i => {
+    let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    cueEl.classList = "has_comments";
   });
 }
 document.addEventListener("keypress", function(e) {
@@ -101,4 +137,22 @@ document.addEventListener("keypress", function(e) {
     submitComments();
   }
 });
-// document.addEventListener("click", restoreSelectionStyling);
+
+function highlightComment(el) {
+  // console.log(el.attributes["data-comment"].value);
+  let commentIdx = el.attributes["data-comment"].value;
+  comment = dataPersist.find(data => data.id == commentIdx);
+  for (let i = comment.startIdx; i <= comment.endIdx; i++) {
+    let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    cueEl.classList.add("highlight-comment");
+  }
+}
+
+function unHighlightComment(el) {
+  let commentIdx = el.attributes["data-comment"].value;
+  comment = dataPersist.find(data => data.id == commentIdx);
+  for (let i = comment.startIdx; i <= comment.endIdx; i++) {
+    let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    cueEl.classList.remove("highlight-comment");
+  }
+}
