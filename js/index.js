@@ -156,14 +156,3 @@ function unHighlightComment(el) {
     cueEl.classList.remove("highlight-comment");
   }
 }
-
-window.onload = fetchUsers;
-
-function fetchUsers() {
-  fetch("https://my-json-server.typicode.com/sub0-l3/mock-data/users")
-    .then(res => res.json())
-    .then(res => console.log(res))
-    .then(res => renderUsers(res));
-}
-
-function renderUsers(users) {}

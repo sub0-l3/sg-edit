@@ -59,6 +59,7 @@
 
 .user {
   opacity: 0.75;
+  margin-left: 1rem;
   text-align: center;
   font-weight: normal;
   transition: all 0.5s;
