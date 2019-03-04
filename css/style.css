@@ -9,14 +9,13 @@
 }
 
 .container__content {
-  padding: 1rem;
   font-size: 1.5rem;
 }
 
 #storyReader {
   position: relative;
   width: 40%;
-  padding: 1rem;
+  padding: 0.5rem;
   border: 1px solid lightgrey;
 }
 
@@ -51,4 +50,25 @@
 .highlight-comment {
   color: white;
   background-color: brown;
+}
+
+#list-users {
+  display: flex;
+  margin: 1rem;
+}
+
+.user {
+  opacity: 0.75;
+  text-align: center;
+  font-weight: normal;
+  transition: all 0.5s;
+}
+
+.user:hover {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.user__type {
+  font-weight: normal;
 }
