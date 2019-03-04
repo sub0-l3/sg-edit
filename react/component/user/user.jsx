@@ -7,7 +7,10 @@ class User extends React.Component {
   componentWillMount() {
     fetch("https://my-json-server.typicode.com/sub0-l3/mock-data/users")
       .then(res => res.json())
-      .then(res => this.setState({ users: res }));
+      .then(res => {
+        this.setState({ users: res });
+        allUsers = res;
+      });
   }
 
   setCurrentUser = user => {

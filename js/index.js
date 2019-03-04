@@ -3,6 +3,7 @@ let data = {};
 let selectedIdsWithOutComments = new Set();
 let selectedIdsWithComments = new Set();
 let comment_id = 0;
+let allUsers = {};
 let currentUser = {
   id: 1,
   first_name: "George",
@@ -120,11 +121,11 @@ document
     );
     let commentsEl = comments.map(
       c =>
-        `<li data-comment=${
+        `<div data-comment=${
           c.id
         } onmouseover="highlightComment(this)" onmouseout="unHighlightComment(this)">${
           c.comment
-        }</li>`
+        } - ${allUsers[c.userId - 1].first_name}</div>`
     );
     document.getElementById("popup__comments").innerHTML = commentsEl.join("");
   });
