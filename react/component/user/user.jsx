@@ -1,7 +1,7 @@
 class User extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { users: null };
+    this.state = { users: null, currentUserId: 1 };
   }
 
   componentWillMount() {
@@ -9,14 +9,24 @@ class User extends React.Component {
       .then(res => res.json())
       .then(res => this.setState({ users: res }));
   }
+
+  setCurrentUser = user => {
+    currentUser = user;
+    this.setState({ currentUserId: user.id });
+  };
+
   render() {
-    const { users } = this.state;
+    const { users, currentUserId } = this.state;
     if (!users) {
       return null;
     }
 
-    let usersList = users.map((user,i) => (
-      <div className="user" key={i}>
+    let usersList = users.map((user, i) => (
+      <div
+        className={`${user.id === currentUserId ? "user user-active" : "user"}`}
+        key={i}
+        onClick={() => this.setCurrentUser(user)}
+      >
         <img className="user__img" src={user.avatar} />
         <div className="user_info">{`${user.first_name} ${
           user.last_name

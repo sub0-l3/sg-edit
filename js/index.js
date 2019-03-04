@@ -3,6 +3,12 @@ let data = {};
 let selectedIdsWithOutComments = new Set();
 let selectedIdsWithComments = new Set();
 let comment_id = 0;
+let currentUser = {
+  id: 1,
+  first_name: "George",
+  last_name: "Bluth",
+  avatar: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
+};
 
 function handleMouseUp() {
   restoreSelectionStyling();
@@ -74,6 +80,7 @@ function submitComments() {
   comment_id += 1;
   data.id = comment_id;
   data.comment = comment;
+  data.userId = currentUser.id;
   dataPersist.push(data);
   for (let i = data.startIdx; i <= data.endIdx; i++) {
     let cueEl = document.querySelector(`span[data-cue='${i}']`);

@@ -58,14 +58,14 @@
 }
 
 .user {
-  opacity: 0.75;
+  opacity: 0.25;
   margin-left: 1rem;
   text-align: center;
   font-weight: normal;
   transition: all 0.5s;
 }
 
-.user:hover {
+.user-active {
   opacity: 1;
   font-weight: bold;
 }
