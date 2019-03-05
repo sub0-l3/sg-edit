@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>suggest edits</title>
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans|Raleway" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans|Raleway"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/style.css" />
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
@@ -82,22 +85,30 @@
         </div>
       </div>
       <div id="popup">
+        <div class="submit-comments-box">
+          <div class="add-comment">
+            <textarea
+              placeholder="Select a phrase and add comment here.."
+              rows="4"
+              class="add-comment__input"
+              id="popup__input"
+            ></textarea>
+            <div class="add-comment__actions">
+              <a class="add-comment__link" onclick="">Cancel</a>
+              <a class="add-comment__link" onclick="submitComments()"
+                >Submit</a
+              >
+            </div>
+          </div>
+          <div id="popup__data"></div>
+        </div>
         <div id="popup__comments"></div>
       </div>
-      <div class="submit-comments-box">
-        <h4>Add comment for selected phrase</h4>
-        <div>
-          <input name="comment" id="popup__input" />
-          <button onclick="submitComments()">Add</button>
-        </div>
-        <div id="popup__data"></div>
-      </div>
     </div>
-    <h2>Choose user?</h2>
+    <h2 class="choose-title">Choose who you are?</h2>
     <div id="list-users"></div>
     <div class="debug">
       <div class="debug__panel">
-        <h2>Data Persistent</h2>
         <div id="data-persist"></div>
       </div>
     </div>

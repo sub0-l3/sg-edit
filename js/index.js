@@ -65,7 +65,7 @@ function handleMouseUp() {
       cueEl.classList.add("selected");
     }
   }
-  renderData();
+  // renderData();
   document.getElementById("popup__input").value = "";
   document.getElementById("popup__input").focus();
 }
@@ -87,13 +87,13 @@ function submitComments() {
     }
   }
   data = new Object();
-  renderData();
+  // renderData();
 
-  document.getElementById("data-persist").innerHTML = `<pre>${JSON.stringify(
-    dataPersist,
-    null,
-    2
-  )}<pre>`;
+  // document.getElementById("data-persist").innerHTML = `<pre>${JSON.stringify(
+  //   dataPersist,
+  //   null,
+  //   2
+  // )}<pre>`;
 }
 
 function renderData() {
