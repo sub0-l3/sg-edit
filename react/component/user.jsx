@@ -1,7 +1,7 @@
 class User extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { users: null, currentUserId: 1 };
+    this.state = { users: null, currentUserId: currentUser.id };
   }
 
   componentWillMount() {

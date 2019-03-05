@@ -63,10 +63,6 @@ function handleMouseUp() {
         selectedIdsWithComments.add(i);
       }
       cueEl.classList.add("selected");
-
-      elemRect = cueEl.getBoundingClientRect();
-      offset = elemRect.top - bodyRect.top;
-      console.log("Element is " + offset + " vertical pixels from <body>");
     }
   }
   renderData();
