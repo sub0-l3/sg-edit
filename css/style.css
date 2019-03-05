@@ -23,6 +23,8 @@
   border: 1px solid lightgrey;
   padding: 5px;
   width: 25%;
+  overflow-y: scroll;
+  height: 538px; /* FIXME - hardcoded value */
 }
 
 .submit-comments-box {
@@ -123,4 +125,6 @@
   line-height: 1.43;
   letter-spacing: normal;
   color: rgba(0, 0, 0, 0.56);
+  overflow-y: scroll;
+  max-height: 5rem;
 }
