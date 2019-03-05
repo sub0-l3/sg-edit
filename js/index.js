@@ -117,11 +117,18 @@ document
     );
     let commentsEl = comments.map(
       c =>
-        `<div data-comment=${
+        `<div class="sg-comment" data-comment=${
           c.id
-        } onmouseover="highlightComment(this)" onmouseout="unHighlightComment(this)">${
-          c.comment
-        } - ${allUsers[c.userId - 1].first_name}</div>`
+        } onmouseover="highlightComment(this)" onmouseout="unHighlightComment(this)">
+        <div class="sg-comment__img-wrapper">
+        <img src="${allUsers[c.userId - 1].avatar}" class="sg-comment__img">
+        </div>
+        <div class="sg-comment__content">
+        <div class="sg-comment__content-title">${
+          allUsers[c.userId - 1].first_name + " " +allUsers[c.userId - 1].last_name
+        }</div>
+        <div class="sg-comment__content-time">3 days ago</div><div class="sg-comment__content-body">
+        ${c.comment}</div></div></div>`
     );
     document.getElementById("popup__comments").innerHTML = commentsEl.join("");
   });

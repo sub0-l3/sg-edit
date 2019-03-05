@@ -73,3 +73,54 @@
 .user__type {
   font-weight: normal;
 }
+
+.sg-comment {
+  display: flex;
+  box-shadow: 1px 1px 6px 5px rgba(0, 0, 0, 0.24);
+  padding: 1rem;
+}
+
+.sg-comment + .sg-comment {
+  margin-top: 1rem;
+}
+
+.sg-comment__img-wrapper {
+  min-width: 2rem;
+  flex: 1;
+}
+
+.sg-comment__img {
+  width: 100%;
+  border-radius: 1000px;
+}
+
+.sg-comment__content {
+  font-family: "Raleway", sans-serif;
+  padding: 0 1rem;
+  flex: 7;
+}
+
+.sg-comment__content-title {
+  color: rgba(0, 0, 0, 0.56);
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.sg-comment__content-time {
+  color: #625d5d;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.sg-comment__content-body {
+  padding: 1rem 0;
+  font-size: 14px;
+  font-family: "Noto Sans", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.43;
+  letter-spacing: normal;
+  color: rgba(0, 0, 0, 0.56);
+}
