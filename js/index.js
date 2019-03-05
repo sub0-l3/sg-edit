@@ -127,7 +127,7 @@ document
         <div class="sg-comment__content-title">${
           allUsers[c.userId - 1].first_name + " " +allUsers[c.userId - 1].last_name
         }</div>
-        <div class="sg-comment__content-time">3 days ago</div><div class="sg-comment__content-body">
+        <div class="sg-comment__content-time">${getRandomInt(1,15)} days ago</div><div class="sg-comment__content-body">
         ${c.comment}</div></div></div>`
     );
     document.getElementById("popup__comments").innerHTML = commentsEl.join("");
@@ -166,4 +166,10 @@ function unHighlightComment(el) {
     let cueEl = document.querySelector(`span[data-cue='${i}'`);
     cueEl.classList.remove("highlight-comment");
   }
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
