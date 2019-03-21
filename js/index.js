@@ -11,7 +11,35 @@ let currentUser = {
   avatar: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
 };
 
+function getSelectedText() {
+  t = (document.all) ? document.selection.createRange().text : document.getSelection();
+  return t;
+}
+
+function getSelectionHtml() {
+  var html = "";
+  if (typeof window.getSelection != "undefined") {
+      var sel = window.getSelection();
+      if (sel.rangeCount) {
+          var container = document.createElement("div");
+          for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+              container.appendChild(sel.getRangeAt(i).cloneContents());
+          }
+          html = container.innerHTML;
+      }
+  } else if (typeof document.selection != "undefined") {
+      if (document.selection.type == "Text") {
+          html = document.selection.createRange().htmlText;
+      }
+  }
+  return html;
+}
+
 function handleMouseUp() {
+  let selection = getSelectedText();
+  let selectedText = selection.toString();
+  let selectedHTML = getSelectionHtml();
+
   restoreSelectionStyling();
   data = {};
   storyPageEl = document.getElementById("storyReader");
@@ -71,7 +99,7 @@ function handleMouseUp() {
 }
 
 function submitComments() {
-  var comment = document.getElementById("popup__input").value;
+  let comment = document.getElementById("popup__input").value;
   document.getElementById("popup__input").value = "";
   if (Object.keys(data).length === 0) return;
   comment_id += 1;
