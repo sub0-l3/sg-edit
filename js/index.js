@@ -11,89 +11,56 @@ let currentUser = {
   avatar: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
 };
 
+const selectionState = {
+  selectedOnly: 1,
+  selectedAndCommented: 2
+};
+
 function getSelectedText() {
-  t = (document.all) ? document.selection.createRange().text : document.getSelection();
+  t = document.all
+    ? document.selection.createRange().text
+    : document.getSelection();
   return t;
 }
 
 function getSelectionHtml() {
   var html = "";
   if (typeof window.getSelection != "undefined") {
-      var sel = window.getSelection();
-      if (sel.rangeCount) {
-          var container = document.createElement("div");
-          for (var i = 0, len = sel.rangeCount; i < len; ++i) {
-              container.appendChild(sel.getRangeAt(i).cloneContents());
-          }
-          html = container.innerHTML;
+    var sel = window.getSelection();
+    if (sel.rangeCount) {
+      var container = document.createElement("div");
+      for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+        container.appendChild(sel.getRangeAt(i).cloneContents());
       }
+      html = container.innerHTML;
+    }
   } else if (typeof document.selection != "undefined") {
-      if (document.selection.type == "Text") {
-          html = document.selection.createRange().htmlText;
-      }
+    if (document.selection.type == "Text") {
+      html = document.selection.createRange().htmlText;
+    }
   }
   return html;
 }
 
 function handleMouseUp() {
+  restoreSelectionStyling();
   let selection = getSelectedText();
   let selectedText = selection.toString();
   let selectedHTML = getSelectionHtml();
+  let range = selection.getRangeAt(0);
+  if (range.startContainer === range.endContainer) {
+    let spanEl = document.createElement("SPAN");
+    spanEl.textContent = selectedText;
+    spanEl.setAttribute("class", "selected");
+    spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
+    range.deleteContents();
+    range.insertNode(spanEl);
+  }
 
-  restoreSelectionStyling();
   data = {};
   storyPageEl = document.getElementById("storyReader");
-  let bodyRect = document.body.getBoundingClientRect();
-  // condition to handle case where selection starts from a space
-  let anchorNode = document.getSelection().anchorNode,
-    focusNode = document.getSelection().focusNode;
-  let startIdx, endIdx;
 
-  if (anchorNode.parentNode.attributes["data-cue"]) {
-    startIdx = anchorNode.parentNode.attributes["data-cue"].value;
-  } else if (
-    anchorNode.nextSibling &&
-    anchorNode.nextSibling.attributes["data-cue"]
-  ) {
-    startIdx = anchorNode.nextSibling.attributes["data-cue"].value;
-  } else {
-    return;
-  }
-
-  if (focusNode.parentNode.attributes["data-cue"]) {
-    endIdx = focusNode.parentNode.attributes["data-cue"].value;
-  } else if (
-    focusNode.previousSibling &&
-    focusNode.previousSibling.attributes["data-cue"]
-  ) {
-    endIdx = focusNode.previousSibling.attributes["data-cue"].value;
-  } else {
-    return;
-  }
-
-  let minIdx = Math.min(startIdx, endIdx);
-
-  let maxIdx = Math.max(startIdx, endIdx);
-
-  data.startIdx = minIdx;
-  data.endIdx = maxIdx;
-  data.selected = [];
-  for (let i = minIdx; i <= maxIdx; i++) {
-    let cueEl = document.querySelector(`span[data-cue='${i}']`);
-
-    if (cueEl) {
-      data.selected.push(cueEl.innerHTML);
-
-      if (!cueEl.classList.contains("has_comments")) {
-        selectedIdsWithOutComments.add(i);
-      } else if (cueEl.classList.contains("has_comments")) {
-        cueEl.classList.remove("has_comments");
-        selectedIdsWithComments.add(i);
-      }
-      cueEl.classList.add("selected");
-    }
-  }
-  // renderData();
+  renderData();
   document.getElementById("popup__input").value = "";
   document.getElementById("popup__input").focus();
 }
@@ -115,13 +82,13 @@ function submitComments() {
     }
   }
   data = new Object();
-  // renderData();
+  renderData();
 
-  // document.getElementById("data-persist").innerHTML = `<pre>${JSON.stringify(
-  //   dataPersist,
-  //   null,
-  //   2
-  // )}<pre>`;
+  document.getElementById("data-persist").innerHTML = `<pre>${JSON.stringify(
+    dataPersist,
+    null,
+    2
+  )}<pre>`;
 }
 
 function renderData() {
@@ -152,23 +119,43 @@ document
         <img src="${allUsers[c.userId - 1].avatar}" class="sg-comment__img">
         </div>
         <div class="sg-comment__content">
-        <div class="sg-comment__content-title">${
-          allUsers[c.userId - 1].first_name + " " +allUsers[c.userId - 1].last_name
-        }</div>
-        <div class="sg-comment__content-time">${getRandomInt(1,15)} days ago</div><div class="sg-comment__content-body">
+        <div class="sg-comment__content-title">${allUsers[c.userId - 1]
+          .first_name +
+          " " +
+          allUsers[c.userId - 1].last_name}</div>
+        <div class="sg-comment__content-time">${getRandomInt(
+          1,
+          15
+        )} days ago</div><div class="sg-comment__content-body">
         ${c.comment}</div></div></div>`
     );
     document.getElementById("popup__comments").innerHTML = commentsEl.join("");
   });
 
+// selectedIdsWithOutComments.forEach(i => {
+//   let cueEl = document.querySelector(`span[data-comment-attached='1'`);
+//   cueEl.classList = "";
+// });
 function restoreSelectionStyling() {
-  selectedIdsWithOutComments.forEach(i => {
-    let cueEl = document.querySelector(`span[data-cue='${i}'`);
-    cueEl.classList = "";
-  });
+  // undoSpanWrap(el); TODO
+  let el = document.querySelector(`span[data-comment-attached='1']`);
+  console.log(el);
+  if (el) {
+    el.classList = "";
+    el.removeAttribute("data-comment-attached");
+  }
+  if (el) {
+    var parent = el.parentNode;
+    while (el.firstChild) {
+      parent.insertBefore(el.firstChild, el);
+    }
+    parent.removeChild(el);
+    parent.normalize();
+  }
+
   selectedIdsWithComments.forEach(i => {
-    let cueEl = document.querySelector(`span[data-cue='${i}'`);
-    cueEl.classList = "has_comments";
+    // let cueEl = document.querySelector(`span[data-cue='${i}'`);
+    // cueEl.classList = "has_comments";
   });
 }
 document.addEventListener("keypress", function(e) {
