@@ -56,16 +56,16 @@ function handleMouseUp() {
     range.deleteContents();
     range.insertNode(spanEl);
   } else {
-    let df = range.cloneContents();
+    let df = range.extractContents();
     let spanElsList = [];
-    range.deleteContents();
+    
     df.childNodes.forEach(node => {
       let spanEl = document.createElement("SPAN");
-      spanEl.textContent = selectedText;
+      
       if (node.nodeType == 3) {
         spanEl.textContent = node.textContent;
       } else {
-        spanEl = node;
+        spanEl.innerHTML = node.innerHTML;
       }
       spanEl.setAttribute("class", "selected");
       spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
