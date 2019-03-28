@@ -55,6 +55,23 @@ function handleMouseUp() {
     spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
     range.deleteContents();
     range.insertNode(spanEl);
+  } else {
+    let df = range.cloneContents();
+    let spanElsList = [];
+    range.deleteContents();
+    df.childNodes.forEach(node => {
+      let spanEl = document.createElement("SPAN");
+      spanEl.textContent = selectedText;
+      if (node.nodeType == 3) {
+        spanEl.textContent = node.textContent;
+      } else {
+        spanEl = node;
+      }
+      spanEl.setAttribute("class", "selected");
+      spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
+      spanElsList.push(spanEl);
+    });
+    spanElsList.reverse().forEach(el => range.insertNode(el));
   }
 
   data = {};
@@ -138,20 +155,22 @@ document
 // });
 function restoreSelectionStyling() {
   // undoSpanWrap(el); TODO
-  let el = document.querySelector(`span[data-comment-attached='1']`);
-  console.log(el);
-  if (el) {
-    el.classList = "";
-    el.removeAttribute("data-comment-attached");
-  }
-  if (el) {
-    var parent = el.parentNode;
-    while (el.firstChild) {
-      parent.insertBefore(el.firstChild, el);
+  let elements = document.querySelectorAll(`[data-comment-attached='1']`);
+  elements.forEach(el => {
+    console.log(el);
+    if (el) {
+      el.classList = "";
+      el.removeAttribute("data-comment-attached");
     }
-    parent.removeChild(el);
-    parent.normalize();
-  }
+    if (el) {
+      var parent = el.parentNode;
+      while (el.firstChild) {
+        parent.insertBefore(el.firstChild, el);
+      }
+      parent.removeChild(el);
+      parent.normalize();
+    }
+  });
 
   selectedIdsWithComments.forEach(i => {
     // let cueEl = document.querySelector(`span[data-cue='${i}'`);
