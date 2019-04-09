@@ -1,4 +1,10 @@
 let dataPersist = [];
+dataPersist.push({
+  selected: "someone call",
+  id: "tclej0ly8",
+  comment: "a brief suggestion..",
+  userId: 3
+});
 let data = {};
 let selectedIdsWithOutComments = new Set();
 let selectedIdsWithComments = new Set();
@@ -26,7 +32,6 @@ function getSelectedText() {
 function handleMouseUp() {
   restoreSelectionStyling();
   let selection = getSelectedText();
-  let selectedText = selection.toString();
   let range = selection.getRangeAt(0);
 
   newRange = document.createRange();
@@ -42,15 +47,17 @@ function handleMouseUp() {
       spanEl.textContent = node.textContent;
     } else {
       spanEl.innerHTML = node.innerHTML;
+      spanEl.className = node.className;
     }
-    spanEl.setAttribute("class", "selected");
+    spanEl.classList.add("selected");
     spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
     spanElsList.push(spanEl);
   });
   spanElsList.reverse().forEach(el => newRange.insertNode(el));
 
   data = {};
-  storyPageEl = document.getElementById("storyReader");
+  let selectedText = selection.toString();
+  data.selected = selectedText;
 
   renderData();
   document.getElementById("popup__input").value = "";
@@ -60,13 +67,21 @@ function handleMouseUp() {
 function submitComments() {
   let comment = document.getElementById("popup__input").value;
   document.getElementById("popup__input").value = "";
-
+  randomClassName = generateRandomHex();
   document.querySelectorAll(".selected").forEach(el => {
     el.classList.remove("selected");
     el.classList.add("has_comments");
-    el.setAttribute("data-comment-attached", selectionState.selectedAndCommented);
+    el.classList.toString();
+    el.classList.add(randomClassName);
+    el.setAttribute(
+      "data-comment-attached",
+      selectionState.selectedAndCommented
+    );
   });
-  
+  data.id = randomClassName;
+  data.comment = comment;
+  data.userId = currentUser.id;
+  dataPersist.push(data);
   data = new Object();
   renderData();
 
@@ -79,7 +94,9 @@ function submitComments() {
 
 // Ref. https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function generateRandomHex() {
-  return Math.random().toString(36).substring(3);
+  return Math.random()
+    .toString(36)
+    .substring(3);
 }
 
 function renderData() {
@@ -94,13 +111,13 @@ function renderData() {
 document
   .getElementById("storyReader")
   .addEventListener("mouseover", function(event) {
+    let commentIDList = [];
     // If the event target doesn't match bail
-    if (!event.target.hasAttribute("data-cue")) return;
-    currentIdx = event.target.attributes["data-cue"].value;
+    if (!event.target.classList.contains("has_comments")) return;
+    commentIDList = Array.from(event.target.classList);
     // Otherwise, run your code...
-    let comments = dataPersist.filter(
-      data => currentIdx >= data.startIdx && currentIdx <= data.endIdx
-    );
+    let comments = dataPersist.filter(data => commentIDList.includes(data.id));
+    console.log(comments);
     let commentsEl = comments.map(
       c =>
         `<div class="sg-comment" data-comment=${
