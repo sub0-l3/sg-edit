@@ -23,56 +23,32 @@ function getSelectedText() {
   return t;
 }
 
-function getSelectionHtml() {
-  var html = "";
-  if (typeof window.getSelection != "undefined") {
-    var sel = window.getSelection();
-    if (sel.rangeCount) {
-      var container = document.createElement("div");
-      for (var i = 0, len = sel.rangeCount; i < len; ++i) {
-        container.appendChild(sel.getRangeAt(i).cloneContents());
-      }
-      html = container.innerHTML;
-    }
-  } else if (typeof document.selection != "undefined") {
-    if (document.selection.type == "Text") {
-      html = document.selection.createRange().htmlText;
-    }
-  }
-  return html;
-}
-
 function handleMouseUp() {
   restoreSelectionStyling();
   let selection = getSelectedText();
   let selectedText = selection.toString();
-  let selectedHTML = getSelectionHtml();
   let range = selection.getRangeAt(0);
-  if (range.startContainer === range.endContainer) {
+
+  newRange = document.createRange();
+  newRange.setStart(selection.anchorNode.parentNode, 0);
+  newRange.setEnd(selection.focusNode.parentNode, 1);
+
+  let documentFragment = newRange.extractContents();
+  let spanElsList = [];
+  console.log(documentFragment)
+  documentFragment.childNodes.forEach(node => {
     let spanEl = document.createElement("SPAN");
-    spanEl.textContent = selectedText;
+
+    if (node.nodeType == 3) {
+      spanEl.textContent = node.textContent;
+    } else {
+      spanEl.innerHTML = node.innerHTML;
+    }
     spanEl.setAttribute("class", "selected");
     spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
-    range.deleteContents();
-    range.insertNode(spanEl);
-  } else {
-    let df = range.extractContents();
-    let spanElsList = [];
-    
-    df.childNodes.forEach(node => {
-      let spanEl = document.createElement("SPAN");
-      
-      if (node.nodeType == 3) {
-        spanEl.textContent = node.textContent;
-      } else {
-        spanEl.innerHTML = node.innerHTML;
-      }
-      spanEl.setAttribute("class", "selected");
-      spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
-      spanElsList.push(spanEl);
-    });
-    spanElsList.reverse().forEach(el => range.insertNode(el));
-  }
+    spanElsList.push(spanEl);
+  });
+  spanElsList.reverse().forEach(el => newRange.insertNode(el));
 
   data = {};
   storyPageEl = document.getElementById("storyReader");
@@ -149,33 +125,7 @@ document
     document.getElementById("popup__comments").innerHTML = commentsEl.join("");
   });
 
-// selectedIdsWithOutComments.forEach(i => {
-//   let cueEl = document.querySelector(`span[data-comment-attached='1'`);
-//   cueEl.classList = "";
-// });
-function restoreSelectionStyling() {
-  // undoSpanWrap(el); TODO
-  let elements = document.querySelectorAll(`[data-comment-attached='1']`);
-  elements.forEach(el => {
-    if (el) {
-      el.classList = "";
-      el.removeAttribute("data-comment-attached");
-    }
-    if (el) {
-      var parent = el.parentNode;
-      while (el.firstChild) {
-        parent.insertBefore(el.firstChild, el);
-      }
-      parent.removeChild(el);
-      parent.normalize();
-    }
-  });
-
-  selectedIdsWithComments.forEach(i => {
-    // let cueEl = document.querySelector(`span[data-cue='${i}'`);
-    // cueEl.classList = "has_comments";
-  });
-}
+function restoreSelectionStyling() {}
 document.addEventListener("keypress", function(e) {
   if (e.which == 13) {
     submitComments();

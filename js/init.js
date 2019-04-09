@@ -1,6 +1,6 @@
 function init() {
     contentEl = document.getElementById("storyReader");
-    setTimeout(() => getLeafNodes(contentEl), 3000);
+    setTimeout(() => getLeafNodes(contentEl), 1000);
   }
   
   function getLeafNodes(node) {
@@ -8,7 +8,6 @@ function init() {
       // nodeType 3 indicates Text node
       if (node.nodeType === 3 && node.wholeText.trim() !== "") {
         var text = node.wholeText;
-        console.log(wrapWords(text));
         var newNode = document.createElement("span");
         newNode.innerHTML = wrapWords(text);
         var parentNode = node.parentNode;
