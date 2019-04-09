@@ -60,19 +60,13 @@ function handleMouseUp() {
 function submitComments() {
   let comment = document.getElementById("popup__input").value;
   document.getElementById("popup__input").value = "";
-  if (Object.keys(data).length === 0) return;
-  comment_id += 1;
-  data.id = comment_id;
-  data.comment = comment;
-  data.userId = currentUser.id;
-  dataPersist.push(data);
-  for (let i = data.startIdx; i <= data.endIdx; i++) {
-    let cueEl = document.querySelector(`span[data-cue='${i}']`);
-    if (cueEl) {
-      cueEl.classList = "has_comments";
-      selectedIdsWithOutComments.delete(i);
-    }
-  }
+
+  document.querySelectorAll(".selected").forEach(el => {
+    el.classList.remove("selected");
+    el.classList.add("has_comments");
+    el.setAttribute("data-comment-attached", selectionState.selectedAndCommented);
+  });
+  
   data = new Object();
   renderData();
 
@@ -81,6 +75,11 @@ function submitComments() {
     null,
     2
   )}<pre>`;
+}
+
+// Ref. https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+function generateRandomHex() {
+  return Math.random().toString(36).substring(3);
 }
 
 function renderData() {
