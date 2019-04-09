@@ -157,7 +157,6 @@ function restoreSelectionStyling() {
   // undoSpanWrap(el); TODO
   let elements = document.querySelectorAll(`[data-comment-attached='1']`);
   elements.forEach(el => {
-    console.log(el);
     if (el) {
       el.classList = "";
       el.removeAttribute("data-comment-attached");
