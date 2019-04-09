@@ -35,7 +35,6 @@ function handleMouseUp() {
 
   let documentFragment = newRange.extractContents();
   let spanElsList = [];
-  console.log(documentFragment)
   documentFragment.childNodes.forEach(node => {
     let spanEl = document.createElement("SPAN");
 
@@ -125,7 +124,12 @@ document
     document.getElementById("popup__comments").innerHTML = commentsEl.join("");
   });
 
-function restoreSelectionStyling() {}
+function restoreSelectionStyling() {
+  document.querySelectorAll(".selected").forEach(el => {
+    el.classList.remove("selected");
+    el.removeAttribute("data-comment-attached");
+  });
+}
 document.addEventListener("keypress", function(e) {
   if (e.which == 13) {
     submitComments();
