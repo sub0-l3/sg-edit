@@ -35,8 +35,14 @@ function handleMouseUp() {
   let range = selection.getRangeAt(0);
 
   newRange = document.createRange();
-  newRange.setStart(selection.anchorNode.parentNode, 0);
-  newRange.setEnd(selection.focusNode.parentNode, 1);
+
+  if (selection.anchorNode == range.startContainer) {
+    newRange.setStart(selection.anchorNode.parentNode, 0);
+    newRange.setEnd(selection.focusNode.parentNode, 1);
+  } else { // handle reverse selection
+    newRange.setStart(selection.focusNode.parentNode, 0);
+    newRange.setEnd(selection.anchorNode.parentNode, 1);
+  }
 
   let documentFragment = newRange.extractContents();
   let spanElsList = [];
