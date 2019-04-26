@@ -25,6 +25,6 @@ function init() {
   }
   
   function wrapWords(str) {
-    return str.replace(/\w+|\W+/g, "<span>$&</span>");
+    return str.replace(/(\S+\s+)/g, "<span>$&</span>");
   }
   

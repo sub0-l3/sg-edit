@@ -56,7 +56,12 @@ function handleMouseUp() {
   spanElsList.reverse().forEach(el => newRange.insertNode(el));
 
   data = {};
-  let selectedText = selection.toString();
+  let selectedText = "";
+  if (selection.anchorNode === selection.focusNode) {
+    selectedText = selection.anchorNode.textContent;
+  } else {
+    selectedText = selection.toString();
+  }
   data.selected = selectedText;
 
   renderData();
