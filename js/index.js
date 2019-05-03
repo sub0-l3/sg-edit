@@ -33,6 +33,10 @@ function handleMouseUp() {
   restoreSelectionStyling();
   let selection = getSelectedText();
   let range = selection.getRangeAt(0);
+  if (selection.anchorNode === selection.focusNode) {
+    range.startContainer.parentElement.classList.add("selected");
+    return;
+  }
 
   newRange = document.createRange();
 
@@ -46,20 +50,28 @@ function handleMouseUp() {
 
   let documentFragment = newRange.extractContents();
   let spanElsList = [];
+  console.log("Doc Fragment childNodes Count: ", documentFragment.childNodes.length);
+
   documentFragment.childNodes.forEach(node => {
+    console.log("Text: ", node.textContent, ", Type: ", node.nodeType, ", innerHTML", node.innerHTML)
     let spanEl = document.createElement("SPAN");
 
     if (node.nodeType == 3) {
       spanEl.textContent = node.textContent;
+      spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
+      spanEl.classList.add("selected");
     } else {
+      console.log(node.hasChildNodes(), "child count: ", node.childNodes.length)
       spanEl.innerHTML = node.innerHTML;
       spanEl.className = node.className;
+      setSelectionOnLeafNodes(spanEl);
     }
-    spanEl.classList.add("selected");
-    spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
     spanElsList.push(spanEl);
   });
-  spanElsList.reverse().forEach(el => newRange.insertNode(el));
+  spanElsList.reverse().forEach(el => {
+    // console.log(el.innerHTML);
+    newRange.insertNode(el);
+  });
 
   data = {};
   let selectedText = "";
@@ -73,6 +85,16 @@ function handleMouseUp() {
   renderData();
   document.getElementById("popup__input").value = "";
   document.getElementById("popup__input").focus();
+}
+
+function setSelectionOnLeafNodes(node) {
+  if (node.hasChildNodes()) {
+    node.childNodes.forEach(childNode => setSelectionOnLeafNodes(childNode));
+  } else {
+    console.log(node);
+    node.parentElement && node.parentElement.classList.add("selected");
+    return;
+  }
 }
 
 function submitComments() {
@@ -124,11 +146,11 @@ document
   .addEventListener("mouseover", function(event) {
     let commentIDList = [];
     // If the event target doesn't match bail
+    // console.log(event.target)
     if (!event.target.classList.contains("has_comments")) return;
     commentIDList = Array.from(event.target.classList);
     // Otherwise, run your code...
     let comments = dataPersist.filter(data => commentIDList.includes(data.id));
-    console.log(comments);
     let commentsEl = comments.map(
       c =>
         `<div class="sg-comment" data-comment=${
@@ -164,7 +186,6 @@ document.addEventListener("keypress", function(e) {
 });
 
 function highlightComment(el) {
-  // console.log(el.attributes["data-comment"].value);
   let commentIdx = el.attributes["data-comment"].value;
   comment = dataPersist.find(data => data.id == commentIdx);
   for (let i = comment.startIdx; i <= comment.endIdx; i++) {
