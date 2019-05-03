@@ -38,40 +38,9 @@ function handleMouseUp() {
     return;
   }
 
-  newRange = document.createRange();
-
-  if (selection.anchorNode == range.startContainer) {
-    newRange.setStart(selection.anchorNode.parentNode, 0);
-    newRange.setEnd(selection.focusNode.parentNode, 1);
-  } else { // handle reverse selection
-    newRange.setStart(selection.focusNode.parentNode, 0);
-    newRange.setEnd(selection.anchorNode.parentNode, 1);
-  }
-
-  let documentFragment = newRange.extractContents();
-  let spanElsList = [];
-  console.log("Doc Fragment childNodes Count: ", documentFragment.childNodes.length);
-
-  documentFragment.childNodes.forEach(node => {
-    console.log("Text: ", node.textContent, ", Type: ", node.nodeType, ", innerHTML", node.innerHTML)
-    let spanEl = document.createElement("SPAN");
-
-    if (node.nodeType == 3) {
-      spanEl.textContent = node.textContent;
-      spanEl.setAttribute("data-comment-attached", selectionState.selectedOnly);
-      spanEl.classList.add("selected");
-    } else {
-      console.log(node.hasChildNodes(), "child count: ", node.childNodes.length)
-      spanEl.innerHTML = node.innerHTML;
-      spanEl.className = node.className;
-      setSelectionOnLeafNodes(spanEl);
-    }
-    spanElsList.push(spanEl);
-  });
-  spanElsList.reverse().forEach(el => {
-    // console.log(el.innerHTML);
-    newRange.insertNode(el);
-  });
+  let startNode = range.startContainer;
+  let endNode = range.endContainer;
+  while ((startNode = getNextNode(startNode, false, endNode)));
 
   data = {};
   let selectedText = "";
@@ -85,6 +54,29 @@ function handleMouseUp() {
   renderData();
   document.getElementById("popup__input").value = "";
   document.getElementById("popup__input").focus();
+}
+
+function getNextNode(node, skipChildren, endNode) {
+  if (
+    node &&
+    node.hasChildNodes() &&
+    node.childNodes.length === 1 &&
+    node.childNodes[0].nodeType === 3
+  ) {
+    node.classList.add("selected");
+    console.log(node);
+  }
+  if (endNode == node) {
+    return null;
+  }
+  //if there are child nodes and we didn't come from a child node
+  if (node.firstChild && !skipChildren) {
+    return node.firstChild;
+  }
+  if (!node.parentNode) {
+    return null;
+  }
+  return node.nextSibling || getNextNode(node.parentNode, true, endNode);
 }
 
 function setSelectionOnLeafNodes(node) {
