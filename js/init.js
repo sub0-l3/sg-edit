@@ -1,6 +1,9 @@
 function init() {
     contentEl = document.getElementById("storyReader");
-    setTimeout(() => getLeafNodes(contentEl), 1000);
+    if (!contentEl.classList.contains("is-spanified")) {
+      contentEl.classList.add("is-spanified")
+      setTimeout(() => getLeafNodes(contentEl), 1000);
+    }
   }
   
   function getLeafNodes(node) {
